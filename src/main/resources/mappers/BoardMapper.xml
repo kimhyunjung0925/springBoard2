@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.springboard2.BoardMapper">
+    <insert id="insBoard" parameterType="BoardEntity">
+        INSERT INTO t_Board
+            (title, ctnt)
+        VALUES (#{title}, #{ctnt})
+    </insert>
+
+    <select id="selBoardList" resultType="BoardEntity">
+        SELECT iboard, title, hits, rdt
+        FROM t_board
+        ORDER BY iboard DESC
+    </select>
+
+    <select id="selBoard" resultType="BoardEntity">
+        SELECT *
+        FROM t_board
+        WHERE iboard = ${iboard}
+    </select>
+
+<!--    <update id="updBoard">-->
+<!--        UPDATE t_board-->
+<!--        <set>-->
+<!--            <if test="title != null and title != '' "> &lt;!&ndash;널체크 빈칸체크&ndash;&gt;-->
+<!--                title = #{title},-->
+<!--            </if>-->
+<!--            <if test='ctnt != null and ctnt != "" '>-->
+<!--                ctnt =#{ctnt},-->
+<!--            </if>-->
+<!--            <if test="hits == 1">-->
+<!--                hits = hits + 1-->
+<!--            </if>-->
+<!--        </set>-->
+<!--        WHERE iboard = ${iboard}-->
+<!--    </update>-->
+
+    <update id="updBoard">
+        UPDATE t_board
+        SET
+        <choose>
+            <when test=" hits == 1 ">
+                hits = hits + 1
+            </when>
+            <otherwise>
+                <if test=" title != null and title != '' ">
+                    title = #{title},
+                </if>
+                <if test=' ctnt != null and ctnt != "" '>
+                    ctnt = #{ctnt},
+                </if>
+                mdt = current_timestamp()
+            </otherwise>
+        </choose>
+        WHERE iboard = ${iboard}
+    </update>
+
+    <delete id="delBoard">
+        DELETE
+        FROM t_board
+        WHERE iboard = ${iboard};
+    </delete>
+
+
+</mapper>
